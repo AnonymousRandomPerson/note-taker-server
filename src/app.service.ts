@@ -10,6 +10,16 @@ export class AppService {
     return newNote;
   }
 
+  async updateNote(note: Note): Promise<boolean> {
+    const result = await APP_DATA_SOURCE.manager.update(Note, { id: note.id }, { ...note });
+    if (result.affected) {
+      console.log(`Updated note with ID ${note.id}.`);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   async getNotes(): Promise<Note[]> {
     console.log(`Getting all notes.`);
     return await APP_DATA_SOURCE.manager.find(Note, { order: { id: 'DESC' } });

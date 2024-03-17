@@ -7,6 +7,7 @@ import { Note } from '../src/entity/Note';
 import { AppService } from '../src/app.service';
 
 describe('AppController (e2e)', () => {
+  const VALID_NOTE = 'New note that is long enough';
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -32,10 +33,9 @@ describe('AppController (e2e)', () => {
 
   describe('addNote', () => {
     it('should add note contents to the database and return new note ID', async () => {
-      const noteContents = 'New note that is long enough';
       return request(app.getHttpServer())
         .post('/')
-        .send({ contents: noteContents })
+        .send({ contents: VALID_NOTE })
         .expect(HttpStatus.CREATED)
         .then(async (response) => {
           expect(response.body.id).toBeDefined();
@@ -43,7 +43,7 @@ describe('AppController (e2e)', () => {
           const dbNotes = await APP_DATA_SOURCE.manager.find(Note);
           expect(dbNotes.length).toBe(1);
           expect(dbNotes[0].id).toBe(response.body.id);
-          expect(dbNotes[0].contents).toBe(noteContents);
+          expect(dbNotes[0].contents).toBe(VALID_NOTE);
         });
     });
 
@@ -54,6 +54,41 @@ describe('AppController (e2e)', () => {
         .expect(HttpStatus.BAD_REQUEST)
         .then(async (response) => {
           expect(response.body).toEqual({});
+        });
+    });
+  });
+
+  describe('updateNote', () => {
+    it('should fail to update note if it does not exist', async () => {
+      return request(app.getHttpServer())
+        .put('/1')
+        .send({ contents: VALID_NOTE })
+        .expect(HttpStatus.NOT_FOUND)
+        .then(async () => {
+          const noteExists = await APP_DATA_SOURCE.manager.exists(Note);
+          expect(noteExists).toBe(false);
+        });
+    });
+
+    it('should update note if it exists', async () => {
+      let note1 = new Note();
+      note1.contents = VALID_NOTE;
+      note1 = await APP_DATA_SOURCE.manager.save(note1);
+
+      let note2 = new Note();
+      note2.contents = VALID_NOTE;
+      note2 = await APP_DATA_SOURCE.manager.save(note2);
+
+      return request(app.getHttpServer())
+        .put(`/${note1.id}`)
+        .send({ contents: VALID_NOTE + '1' })
+        .expect(HttpStatus.OK)
+        .then(async () => {
+          const notes = await APP_DATA_SOURCE.manager.find(Note, { order: { id: 'DESC' } });
+          expect(notes[0].id).toEqual(note2.id);
+          expect(notes[0].contents).toEqual(VALID_NOTE);
+          expect(notes[1].id).toEqual(note1.id);
+          expect(notes[1].contents).toEqual(VALID_NOTE + '1');
         });
     });
   });
