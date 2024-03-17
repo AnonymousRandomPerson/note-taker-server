@@ -58,8 +58,31 @@ describe('AppController (e2e)', () => {
     });
   });
 
+  describe('getNotes', () => {
+    it('should return no notes if there are none', async () => {
+      return request(app.getHttpServer()).get('/').expect(HttpStatus.OK, []);
+    });
+
+    it('should get all notes in descending ID order', async () => {
+      let note1 = new Note();
+      note1.contents = '??';
+      note1 = await APP_DATA_SOURCE.manager.save(note1);
+
+      let note2 = new Note();
+      note2.contents = '??2';
+      note2 = await APP_DATA_SOURCE.manager.save(note2);
+
+      return request(app.getHttpServer())
+        .get('/')
+        .expect(HttpStatus.OK, [
+          { id: note2.id, contents: '??2' },
+          { id: note1.id, contents: '??' },
+        ]);
+    });
+  });
+
   describe('deleteAll', () => {
-    it('should delete all records', async () => {
+    it('should delete all notes', async () => {
       const note = new Note();
       note.contents = '??';
       await APP_DATA_SOURCE.manager.save(note);

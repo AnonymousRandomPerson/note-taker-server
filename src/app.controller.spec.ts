@@ -27,7 +27,7 @@ describe('AppController', () => {
       } as any;
     });
 
-    it('should call addNote when note is valid', async () => {
+    it('should call appService.addNote when note is valid', async () => {
       const noteContents = 'New note that is long enough';
       const returnNote = new Note();
       returnNote.id = 1;
@@ -58,8 +58,18 @@ describe('AppController', () => {
     });
   });
 
+  describe('getNotes', () => {
+    it('should call appService.getNotes', async () => {
+      appController['appService'].getNotes = jest.fn();
+
+      await appController.getNotes();
+
+      expect(appController['appService'].getNotes).toHaveBeenCalled();
+    });
+  });
+
   describe('deleteAll', () => {
-    it('should call deleteAll', async () => {
+    it('should call appService.deleteAll', async () => {
       appController['appService'].deleteAll = jest.fn();
 
       await appController.deleteAll();

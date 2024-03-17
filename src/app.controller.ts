@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, HttpStatus, Post, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Post, Res } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Note } from './entity/Note';
 import { AddNoteResponse } from './app-responses.const';
@@ -26,8 +26,13 @@ export class AppController {
     res.send({ id: newNote.id });
   }
 
+  @Get()
+  async getNotes(): Promise<Note[]> {
+    return await this.appService.getNotes();
+  }
+
   @Delete('/delete-all')
-  async deleteAll() {
+  async deleteAll(): Promise<void> {
     return await this.appService.deleteAll();
   }
 }
