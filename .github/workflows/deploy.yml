@@ -13,6 +13,8 @@ jobs:
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Install
         run: npm ci
+      - name: Lint
+        run: npm run lint
       - name: Run tests
         run: npm run test
       - name: Build
