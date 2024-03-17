@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Note } from './entity/Note';
+import { Note } from './entity/note';
 import { Response } from 'express';
 import { HttpStatus } from '@nestjs/common';
 
@@ -110,16 +110,6 @@ describe('AppController', () => {
       await appController.deleteNote(1);
 
       expect(appController['appService'].deleteNote).toHaveBeenCalledWith(1);
-    });
-  });
-
-  describe('deleteAll', () => {
-    it('should call appService.deleteAll', async () => {
-      appController['appService'].deleteAll = jest.fn();
-
-      await appController.deleteAll();
-
-      expect(appController['appService'].deleteAll).toHaveBeenCalled();
     });
   });
 });

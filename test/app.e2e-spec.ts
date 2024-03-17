@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { AppModule } from '../src/app.module';
 import { APP_DATA_SOURCE, closeDb, setUpDb } from '../src/data-source';
-import { Note } from '../src/entity/Note';
-import { AppService } from '../src/app.service';
+import { Note } from '../src/entity/note';
 
 describe('AppController (e2e)', () => {
   const VALID_NOTE = 'New note that is long enough';
@@ -22,7 +21,7 @@ describe('AppController (e2e)', () => {
     app = moduleFixture.createNestApplication();
 
     // Clean up the DB before each test.
-    await app.get<AppService>(AppService).deleteAll();
+    await APP_DATA_SOURCE.manager.delete(Note, {});
 
     await app.init();
   });
@@ -148,22 +147,6 @@ describe('AppController (e2e)', () => {
           const notes = await APP_DATA_SOURCE.manager.find(Note);
           expect(notes.length).toBe(1);
           expect(notes[0].id).toBe(note.id);
-        });
-    });
-  });
-
-  describe('deleteAll', () => {
-    it('should delete all notes', async () => {
-      const note = new Note();
-      note.contents = VALID_NOTE;
-      await APP_DATA_SOURCE.manager.save(note);
-
-      return request(app.getHttpServer())
-        .delete('/delete-all')
-        .expect(HttpStatus.OK)
-        .then(async () => {
-          const noteExists = await APP_DATA_SOURCE.manager.exists(Note);
-          expect(noteExists).toBe(false);
         });
     });
   });

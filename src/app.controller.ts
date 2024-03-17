@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res } from '@nestjs/common';
 import { AppService } from './app.service';
-import { Note } from './entity/Note';
+import { Note } from './entity/note';
 import { AddNoteResponse } from './app-responses.const';
 import { Response } from 'express';
 
@@ -44,11 +44,6 @@ export class AppController {
   @Get()
   async getNotes(): Promise<Note[]> {
     return await this.appService.getNotes();
-  }
-
-  @Delete('/delete-all')
-  async deleteAll(): Promise<void> {
-    return await this.appService.deleteAll();
   }
 
   @Delete('/:id')

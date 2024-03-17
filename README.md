@@ -1,73 +1,29 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# note-taker-server
+Backend for note taker app. Frontend code can be found [here](https://github.com/AnonymousRandomPerson/note-taker-ui). The deployed app is accessed [here](https://note-taker-ui.fly.dev/).
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Running locally
+1. Run `npm install` to download dependencies.
+2. Start up a Postgres instance. By default, the app connects to the Postgres instance at `localhost:5432` using the default `postgres` user with no password. The connection can be configured with the environment variables `DB_HOST`, `DB_PORT`, `DB_USERNAME`, and `DB_PASSWORD` if needed.
+3. Run `npm run start` to run the server.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Tests can be run with `npm run test` (unit tests) and `npm run test:e2e` (database tests).
 
-## Description
+## Implementation
+The backend server uses the [NestJS](https://nestjs.com/) framework with [TypeScript](https://www.typescriptlang.org/) to serve endpoints. [Postgres](https://www.postgresql.org/) is the backing database, and [TypeORM](https://typeorm.io/) is used to manage database entities within the app. Unit tests are implemented with [Jest](https://jestjs.io/), alongside [SuperTest](https://www.npmjs.com/package/supertest) for testing with the real database.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+The frontend uses the [NextJS](https://nextjs.org/) framework for [React](https://react.dev/). Given the limited number of notes, I opted for a client-side search rather than server-side; this is more responsive to the user, as it skips the endpoint/database call.
 
-## Installation
+The backend, frontend, and database are all hosted using [Fly.io](https://fly.io/). Deployments are set up as a CI/CD (continuous integration/deployment) model using [GitHub Actions](https://docs.github.com/en/actions) pipelines in the backend and frontend repos to automatically lint, test, and deploy committed code.
 
-```bash
-$ npm install
-```
+## Challenges
+Before now, I hadn't set up the deployment of a full-stack application publicly on my own. I have personal projects that deploy static web pages using GitHub Pages, but this does not support backend servers or databases. Meanwhile, my current workplace deploys using GCP (Google Cloud Platform), though the company has Cloud teams dedicated to the infrastructure side, so I didn't experience the whole setup process myself. Larger cloud offerings like GCP and AWS felt like overkill for a small app, so I researched simpler hosting options and found that Fly.io had a free pricing tier for my needs. I read through the documentation and learned both manual and automated deployments from there.
 
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+## Potential changes
+There are several places of improvement that were not needed for the scope of this demo, but might be useful if this app were to go to production.
+* Right now the notes are shared between all users that access the app. If users each want their own private set of notes within the app, login/authentication could be added. Depending on users' needs, another alternative is storing notes in the browser's local storage instead of a database.
+* Depending on how many notes the user could potentially enter, strategies such as pagination, virtual scrolling, or infinite scrolling can be used to avoid slowing down the user's browser.
+* The web URL could use a proper domain name rather than the fly.dev test domain.
+* The deployed app has limited resources, namely 256 MB of RAM per service, one instance of each service, and 1 GB of disk space for the database. A production app will likely need more resources to support more users.
+* Right now, a malicious user could flood the app with notes or other requests using an automated script, potentially causing stability issues. Solutions such as rate-limiting would help guard against this.
+* A test Postgres instance could be set up to allow the build pipeline to run the database tests automatically, either on push or on a time interval.
+* Rather than `console.log`, a logging library could be used to distinguish between different log severity levels like errors and debug logs.

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { APP_DATA_SOURCE } from './data-source';
-import { Note } from './entity/Note';
+import { Note } from './entity/note';
 
 @Injectable()
 export class AppService {
@@ -28,10 +28,5 @@ export class AppService {
   async deleteNote(id: number): Promise<void> {
     console.log(`Deleting note with ID ${id}.`);
     await APP_DATA_SOURCE.manager.delete(Note, id);
-  }
-
-  async deleteAll(): Promise<void> {
-    console.log(`Deleting all notes.`);
-    await APP_DATA_SOURCE.manager.delete(Note, {});
   }
 }

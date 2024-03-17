@@ -1,13 +1,13 @@
 import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { Note } from './entity/Note';
+import { Note } from './entity/note';
 
 export const NOTES_DB_NAME = 'note_taker_server';
 
 const DATA_SOURCE_OPTIONS: DataSourceOptions = {
   type: 'postgres',
   host: process.env.DB_HOST ?? 'localhost',
-  port: 5432,
+  port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 5432,
   username: process.env.DB_USERNAME ?? 'postgres',
   password: process.env.DB_PASSWORD ?? '',
   database: NOTES_DB_NAME,
