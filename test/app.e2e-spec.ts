@@ -100,26 +100,62 @@ describe('AppController (e2e)', () => {
 
     it('should get all notes in descending ID order', async () => {
       let note1 = new Note();
-      note1.contents = '??';
+      note1.contents = VALID_NOTE;
       note1 = await APP_DATA_SOURCE.manager.save(note1);
 
       let note2 = new Note();
-      note2.contents = '??2';
+      note2.contents = VALID_NOTE + '2';
       note2 = await APP_DATA_SOURCE.manager.save(note2);
 
       return request(app.getHttpServer())
         .get('/')
         .expect(HttpStatus.OK, [
-          { id: note2.id, contents: '??2' },
-          { id: note1.id, contents: '??' },
+          { id: note2.id, contents: VALID_NOTE + '2' },
+          { id: note1.id, contents: VALID_NOTE },
         ]);
+    });
+  });
+
+  describe('deleteNote', () => {
+    it('should delete note with given ID', async () => {
+      let note1 = new Note();
+      note1.contents = VALID_NOTE;
+      note1 = await APP_DATA_SOURCE.manager.save(note1);
+
+      let note2 = new Note();
+      note2.contents = VALID_NOTE;
+      note2 = await APP_DATA_SOURCE.manager.save(note2);
+
+      return request(app.getHttpServer())
+        .delete(`/${note1.id}`)
+        .expect(HttpStatus.OK)
+        .then(async () => {
+          const notes = await APP_DATA_SOURCE.manager.find(Note);
+          expect(notes.length).toBe(1);
+          expect(notes[0].id).toBe(note2.id);
+        });
+    });
+
+    it('should not delete note if ID does not exist', async () => {
+      let note = new Note();
+      note.contents = VALID_NOTE;
+      note = await APP_DATA_SOURCE.manager.save(note);
+
+      return request(app.getHttpServer())
+        .delete(`/${note.id + 1}`)
+        .expect(HttpStatus.OK)
+        .then(async () => {
+          const notes = await APP_DATA_SOURCE.manager.find(Note);
+          expect(notes.length).toBe(1);
+          expect(notes[0].id).toBe(note.id);
+        });
     });
   });
 
   describe('deleteAll', () => {
     it('should delete all notes', async () => {
       const note = new Note();
-      note.contents = '??';
+      note.contents = VALID_NOTE;
       await APP_DATA_SOURCE.manager.save(note);
 
       return request(app.getHttpServer())

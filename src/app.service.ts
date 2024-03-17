@@ -25,6 +25,11 @@ export class AppService {
     return await APP_DATA_SOURCE.manager.find(Note, { order: { id: 'DESC' } });
   }
 
+  async deleteNote(id: number): Promise<void> {
+    console.log(`Deleting note with ID ${id}.`);
+    await APP_DATA_SOURCE.manager.delete(Note, id);
+  }
+
   async deleteAll(): Promise<void> {
     console.log(`Deleting all notes.`);
     await APP_DATA_SOURCE.manager.delete(Note, {});

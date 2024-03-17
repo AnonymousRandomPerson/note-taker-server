@@ -103,6 +103,16 @@ describe('AppController', () => {
     });
   });
 
+  describe('deleteNote', () => {
+    it('should call appService.deleteNote', async () => {
+      appController['appService'].deleteNote = jest.fn();
+
+      await appController.deleteNote(1);
+
+      expect(appController['appService'].deleteNote).toHaveBeenCalledWith(1);
+    });
+  });
+
   describe('deleteAll', () => {
     it('should call appService.deleteAll', async () => {
       appController['appService'].deleteAll = jest.fn();

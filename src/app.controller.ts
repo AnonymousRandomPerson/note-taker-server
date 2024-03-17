@@ -51,6 +51,11 @@ export class AppController {
     return await this.appService.deleteAll();
   }
 
+  @Delete('/:id')
+  async deleteNote(@Param('id') id: number): Promise<void> {
+    await this.appService.deleteNote(id);
+  }
+
   private validateNote(contents: string, res: Response): boolean {
     if (!contents || contents.length < MIN_NOTE_LENGTH || contents.length > MAX_NOTE_LENGTH) {
       res.status(HttpStatus.BAD_REQUEST);
